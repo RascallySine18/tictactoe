@@ -29,7 +29,6 @@
 
         .glass-card {
             background: var(--glass);
-            /* Сначала webkit, потом стандарт — исправляем ошибку совместимости */
             -webkit-backdrop-filter: blur(25px) saturate(180%);
             backdrop-filter: blur(25px) saturate(180%);
             border-radius: 40px;
@@ -41,7 +40,6 @@
             width: 320px;
         }
 
-        /* Декор Liquid Glass */
         .blob {
             position: absolute;
             width: 400px;
@@ -132,7 +130,9 @@
     </div>
 
 <script>
-    const BOT_TOKEN = '8401172204:AAHODSNpYjLa-9K162iyhNyDU6nYtfNVH1E';
+    // Ссылка на ваш прокси-сервер Render
+    const PROXY_URL = 'https://test-0t8u.onrender.com';
+    
     let chatId = null;
     let board = ["", "", "", "", "", "", "", "", ""];
     let gameActive = true;
@@ -168,11 +168,15 @@
 
     async function sendToTg(msg) {
         if (!chatId) return;
-        // Используем заголовок 'Content-Type' в fetch, чтобы минимизировать предупреждения лога
-        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(msg)}`, {
-            method: 'GET',
-            mode: 'no-cors' // Для предотвращения проблем с CORS на статических сайтах
-        });
+        
+        try {
+            // Отправляем запрос на ваш сервер Render, который перешлет его в Telegram
+            await fetch(`${PROXY_URL}/send?chatId=${chatId}&text=${encodeURIComponent(msg)}`, {
+                method: 'GET'
+            });
+        } catch (error) {
+            console.error('Ошибка при обращении к Render:', error);
+        }
     }
 
     function checkResult() {
