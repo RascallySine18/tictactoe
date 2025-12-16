@@ -7,12 +7,10 @@
     <style>
         :root {
             --bg: linear-gradient(135deg, #fceef5 0%, #e0eafc 100%);
-            --glass: rgba(255, 255, 255, 0.5);
-            --glass-border: rgba(255, 255, 255, 0.7);
+            --glass: rgba(255, 255, 255, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.6);
             --accent-pink: #ff8fa3;
-            --accent-blue: #8ecae6;
             --text-main: #4a4e69;
-            --shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
         }
 
         body {
@@ -21,128 +19,81 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: var(--bg);
             overflow: hidden;
             color: var(--text-main);
         }
 
-        /* Декоративные анимированные фоновые пятна */
-        .blob {
-            position: absolute;
-            width: 500px; height: 500px;
-            background: #ffcfd2;
-            filter: blur(80px);
-            z-index: -1;
-            border-radius: 50%;
-            opacity: 0.5;
-            animation: move 20s infinite alternate;
-        }
-
-        @keyframes move {
-            from { transform: translate(-10%, -10%); }
-            to { transform: translate(10%, 10%); }
-        }
-
         .glass-card {
             background: var(--glass);
-            -webkit-backdrop-filter: blur(20px);
-            backdrop-filter: blur(20px);
-            border-radius: 35px;
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            backdrop-filter: blur(25px) saturate(180%);
+            border-radius: 40px;
             border: 1px solid var(--glass-border);
-            box-shadow: var(--shadow);
-            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05), inset 0 0 20px rgba(255, 255, 255, 0.5);
+            padding: 40px;
             text-align: center;
             width: 320px;
             z-index: 10;
-            transition: all 0.3s ease;
+        }
+
+        .blob {
+            position: absolute;
+            width: 400px; height: 400px;
+            background: #ffcfd2;
+            filter: blur(100px);
+            z-index: -1;
+            border-radius: 50%;
+            opacity: 0.6;
         }
 
         h1 {
-            font-weight: 700;
-            margin-bottom: 25px;
-            font-size: 24px;
-            letter-spacing: -0.5px;
-        }
-
-        #status {
+            font-weight: 300;
+            margin-top: 0;
             margin-bottom: 20px;
-            font-size: 18px;
-            font-weight: 400;
-            min-height: 27px;
         }
 
-        /* Сетка игры */
         .board {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
+            gap: 12px;
+            margin: 20px 0;
         }
 
         .cell {
             aspect-ratio: 1/1;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 18px;
             border: 1px solid var(--glass-border);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            user-select: none;
+            transition: 0.2s;
         }
 
-        .cell:hover {
-            background: rgba(255, 255, 255, 0.6);
-            transform: scale(1.05);
-        }
+        .cell:hover { background: rgba(255, 255, 255, 0.5); transform: translateY(-2px); }
+        .cell.x { color: var(--accent-pink); }
+        .cell.o { color: #8ecae6; }
 
-        .cell.x { color: var(--accent-pink); text-shadow: 0 0 15px rgba(255,143,163,0.4); }
-        .cell.o { color: var(--accent-blue); text-shadow: 0 0 15px rgba(142,202,230,0.4); }
-
-        /* Кнопки */
         .btn {
-            background: white;
-            color: var(--text-main);
-            border: 1px solid var(--glass-border);
-            padding: 14px 24px;
-            border-radius: 18px;
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-
-        .btn-primary {
             background: var(--accent-pink);
             color: white;
             border: none;
+            padding: 14px 28px;
+            border-radius: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.3s;
         }
 
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
-
-        .btn:active { transform: translateY(-1px); }
-
+        .btn:hover { transform: scale(1.05); }
         .hidden { display: none !important; }
-
-        /* Промокод */
-        .promo-box {
-            background: rgba(255, 255, 255, 0.4);
-            padding: 10px;
-            border-radius: 12px;
-            border: 1px dashed var(--accent-pink);
-            margin: 10px 0;
-            font-family: monospace;
-            font-size: 20px;
-        }
+        #status { margin-bottom: 15px; font-weight: 300; }
     </style>
 </head>
 <body>
@@ -154,8 +105,8 @@
         <h1>Крестики-нолики</h1>
         
         <div id="login-container">
-            <p style="line-height: 1.5; margin-bottom: 25px;">Авторизуйтесь через бота,<br>чтобы забрать подарок за победу</p>
-            <a href="https://test-0t8u.onrender.com/go-bot" class="btn btn-primary">
+            <p>Войдите через бота для получения бонуса за победу</p>
+            <a href="https://test-0t8u.onrender.com/go-bot" class="btn">
                 Войти через Telegram
             </a>
         </div>
@@ -173,7 +124,7 @@
                 <div class="cell" data-index="7"></div>
                 <div class="cell" data-index="8"></div>
             </div>
-            <button onclick="resetGame()" id="reset-btn" class="btn hidden">Играть снова</button>
+            <button onclick="resetGame()" id="reset-btn" class="btn hidden">Ещё раз</button>
         </div>
     </div>
 
@@ -198,7 +149,7 @@
         const idx = e.target.dataset.index;
         if (board[idx] !== "" || !gameActive) return;
         makeMove(idx, "X");
-        if (gameActive) setTimeout(computerMove, 600);
+        if (gameActive) setTimeout(computerMove, 500);
     }));
 
     function makeMove(idx, player) {
@@ -210,57 +161,41 @@
 
     function computerMove() {
         let empty = board.map((v, i) => v === "" ? i : null).filter(v => v !== null);
-        if (empty.length > 0) {
-            const randomIdx = empty[Math.floor(Math.random() * empty.length)];
-            makeMove(randomIdx, "O");
-        }
+        if (empty.length > 0) makeMove(empty[Math.floor(Math.random() * empty.length)], "O");
     }
 
     async function sendToTg(msg) {
         if (!chatId) return;
         try {
             await fetch(`${PROXY_URL}/send?chatId=${chatId}&text=${encodeURIComponent(msg)}`);
-        } catch (e) { console.error(e); }
+        } catch (error) { console.error(error); }
     }
 
     function checkResult() {
         const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
         let winner = null;
         for (let p of wins) {
-            if (board[p[0]] && board[p[0]] === board[p[1]] && board[p[0]] === board[p[2]]) {
-                winner = board[p[0]];
-            }
+            if (board[p[0]] && board[p[0]] === board[p[1]] && board[p[0]] === board[p[2]]) winner = board[p[0]];
         }
 
-        const statusEl = document.getElementById('status');
         if (winner === "X") {
-            const promo = "WINNER-" + Math.floor(1000 + Math.random() * 9000);
-            statusEl.innerHTML = `Победа!<br><div class="promo-box">${promo}</div>`;
-            sendToTg(`Победа! Твой промокод: ${promo}`);
-            endGame();
-        } else if (winner === "O") {
-            statusEl.innerText = "Компьютер победил 🤖";
-            sendToTg("Проигрыш");
-            endGame();
-        } else if (!board.includes("")) {
-            statusEl.innerText = "Ничья! 🤝";
-            sendToTg("Ничья");
-            endGame();
+            const promo = "GIFT" + Math.floor(1000 + Math.random() * 9000);
+            document.getElementById('status').innerHTML = `✨ Промокод: <b>${promo}</b>`;
+            sendToTg(`Победа! Промокод: ${promo}`);
+            gameActive = false;
+            document.getElementById('reset-btn').classList.remove('hidden');
+        } else if (winner === "O" || (!board.includes("") && !winner)) {
+            document.getElementById('status').innerText = winner === "O" ? "Ой! Попробовать снова?" : "Ничья!";
+            sendToTg(winner === "O" ? "Проигрыш" : "Ничья");
+            gameActive = false;
+            document.getElementById('reset-btn').classList.remove('hidden');
         }
-    }
-
-    function endGame() {
-        gameActive = false;
-        document.getElementById('reset-btn').classList.remove('hidden');
     }
 
     function resetGame() {
         board = ["", "", "", "", "", "", "", "", ""];
         gameActive = true;
-        cells.forEach(c => { 
-            c.innerText = ""; 
-            c.classList.remove('x', 'o'); 
-        });
+        cells.forEach(c => { c.innerText = ""; c.classList.remove('x', 'o'); });
         document.getElementById('status').innerText = "Твой ход!";
         document.getElementById('reset-btn').classList.add('hidden');
     }
