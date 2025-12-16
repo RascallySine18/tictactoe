@@ -25,6 +25,7 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: var(--bg);
             overflow: hidden;
+            color: var(--text-main);
         }
 
         .glass-card {
@@ -38,6 +39,8 @@
             padding: 40px;
             text-align: center;
             width: 320px;
+            position: relative;
+            z-index: 10;
         }
 
         .blob {
@@ -89,10 +92,17 @@
             cursor: pointer;
             transition: 0.3s;
             margin-top: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
         }
 
         #status { margin-bottom: 15px; font-weight: 300; }
-        .hidden { display: none; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
@@ -104,12 +114,10 @@
         <h1 style="font-weight: 300; margin-top: 0;">Play & Win</h1>
         
         <div id="login-container">
-            <p>Войдите для получения бонуса</p>
-            <script async src="https://telegram.org/js/telegram-widget.js?22" 
-                    data-telegram-login="bettertictactoe_bot" 
-                    data-size="large" 
-                    data-onauth="onTelegramAuth(user)" 
-                    data-request-access="write"></script>
+            <p>Чтобы играть и получать бонусы, войдите через нашего бота</p>
+            <a href="https://t.me/bettertictactoe_bot" target="_blank" class="btn">
+                Войти через Telegram
+            </a>
         </div>
 
         <div id="game-container" class="hidden">
@@ -130,18 +138,29 @@
     </div>
 
 <script>
-    // Ссылка на ваш прокси-сервер Render
+    // Ссылка на ваш бэкенд на Render
     const PROXY_URL = 'https://test-0t8u.onrender.com';
-    
+    const BOT_USERNAME = 'bettertictactoe_bot';
+
     let chatId = null;
     let board = ["", "", "", "", "", "", "", "", ""];
     let gameActive = true;
 
-    function onTelegramAuth(user) {
-        chatId = user.id;
-        document.getElementById('login-container').style.display = 'none';
-        document.getElementById('game-container').classList.remove('hidden');
-    }
+    // ПРОВЕРКА АВТОРИЗАЦИИ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
+    window.onload = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const idFromUrl = urlParams.get('id');
+
+        if (idFromUrl) {
+            // Если в ссылке есть id=..., активируем игру
+            chatId = idFromUrl;
+            document.getElementById('login-container').classList.add('hidden');
+            document.getElementById('game-container').classList.remove('hidden');
+            console.log("Авторизован как ID:", chatId);
+        } else {
+            console.log("Требуется авторизация через бота.");
+        }
+    };
 
     const cells = document.querySelectorAll('.cell');
     cells.forEach(cell => cell.addEventListener('click', (e) => {
@@ -169,13 +188,12 @@
     async function sendToTg(msg) {
         if (!chatId) return;
         
+        console.log("Отправка уведомления...");
         try {
-            // Отправляем запрос на ваш сервер Render, который перешлет его в Telegram
-            await fetch(`${PROXY_URL}/send?chatId=${chatId}&text=${encodeURIComponent(msg)}`, {
-                method: 'GET'
-            });
+            // Запрос к прокси-серверу Render, который не заблокирован в РФ
+            await fetch(`${PROXY_URL}/send?chatId=${chatId}&text=${encodeURIComponent(msg)}`);
         } catch (error) {
-            console.error('Ошибка при обращении к Render:', error);
+            console.error('Ошибка отправки уведомления:', error);
         }
     }
 
@@ -199,13 +217,20 @@
             sendToTg("Проигрыш");
             gameActive = false;
             document.getElementById('reset-btn').classList.remove('hidden');
+        } else if (!board.includes("")) {
+            document.getElementById('status').innerText = "Ничья! 🤝";
+            gameActive = false;
+            document.getElementById('reset-btn').classList.remove('hidden');
         }
     }
 
     function resetGame() {
         board = ["", "", "", "", "", "", "", "", ""];
         gameActive = true;
-        cells.forEach(c => { c.innerText = ""; c.className = 'cell'; });
+        cells.forEach(c => { 
+            c.innerText = ""; 
+            c.classList.remove('x', 'o'); 
+        });
         document.getElementById('status').innerText = "Твой ход!";
         document.getElementById('reset-btn').classList.add('hidden');
     }
