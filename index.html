@@ -2,11 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <title>Aesthetic Tic-Tac-Toe</title>
-    
     <style>
         :root {
             --bg: linear-gradient(135deg, #fceef5 0%, #e0eafc 100%);
@@ -34,19 +31,16 @@
             backdrop-filter: blur(25px) saturate(180%);
             border-radius: 40px;
             border: 1px solid var(--glass-border);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05), 
-                        inset 0 0 20px rgba(255, 255, 255, 0.5);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05), inset 0 0 20px rgba(255, 255, 255, 0.5);
             padding: 40px;
             text-align: center;
             width: 320px;
-            position: relative;
             z-index: 10;
         }
 
         .blob {
             position: absolute;
-            width: 400px;
-            height: 400px;
+            width: 400px; height: 400px;
             background: #ffcfd2;
             filter: blur(100px);
             z-index: -1;
@@ -71,14 +65,10 @@
             justify-content: center;
             font-size: 2.2rem;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: 0.2s;
         }
 
-        .cell:hover {
-            background: rgba(255, 255, 255, 0.5);
-            transform: translateY(-2px);
-        }
-
+        .cell:hover { background: rgba(255, 255, 255, 0.5); transform: translateY(-2px); }
         .cell.x { color: var(--accent-pink); }
         .cell.o { color: #8ecae6; }
 
@@ -90,19 +80,14 @@
             border-radius: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: 0.3s;
-            margin-top: 10px;
             text-decoration: none;
             display: inline-block;
+            transition: 0.3s;
         }
 
-        .btn:hover {
-            opacity: 0.9;
-            transform: scale(1.05);
-        }
-
-        #status { margin-bottom: 15px; font-weight: 300; }
+        .btn:hover { transform: scale(1.05); }
         .hidden { display: none !important; }
+        #status { margin-bottom: 15px; font-weight: 300; }
     </style>
 </head>
 <body>
@@ -114,8 +99,8 @@
         <h1 style="font-weight: 300; margin-top: 0;">Play & Win</h1>
         
         <div id="login-container">
-            <p>Чтобы играть и получать бонусы, войдите через нашего бота</p>
-            <a href="https://t.me/bettertictactoe_bot" target="_blank" class="btn">
+            <p>Для игры и получения бонуса войдите через нашего бота</p>
+            <a href="https://t.me/bettertictactoe_bot?start=auth" class="btn" id="auth-link">
                 Войти через Telegram
             </a>
         </div>
@@ -138,27 +123,29 @@
     </div>
 
 <script>
-    // Ссылка на ваш бэкенд на Render
     const PROXY_URL = 'https://test-0t8u.onrender.com';
-    const BOT_USERNAME = 'bettertictactoe_bot';
-
     let chatId = null;
     let board = ["", "", "", "", "", "", "", "", ""];
     let gameActive = true;
 
-    // ПРОВЕРКА АВТОРИЗАЦИИ ПРИ ЗАГРУЗКЕ СТРАНИЦЫ
+    // Решение проблемы с ПК: если t.me не срабатывает, пробуем альтернативный адрес
+    document.getElementById('auth-link').addEventListener('click', function(e) {
+        // Даем браузеру 500мс на попытку открыть приложение, если страница осталась пустой — помогаем
+        setTimeout(() => {
+            if (document.hasFocus()) {
+                console.log("Похоже, приложение не открылось автоматически.");
+            }
+        }, 1500);
+    });
+
     window.onload = () => {
         const urlParams = new URLSearchParams(window.location.search);
         const idFromUrl = urlParams.get('id');
 
         if (idFromUrl) {
-            // Если в ссылке есть id=..., активируем игру
             chatId = idFromUrl;
             document.getElementById('login-container').classList.add('hidden');
             document.getElementById('game-container').classList.remove('hidden');
-            console.log("Авторизован как ID:", chatId);
-        } else {
-            console.log("Требуется авторизация через бота.");
         }
     };
 
@@ -166,7 +153,6 @@
     cells.forEach(cell => cell.addEventListener('click', (e) => {
         const idx = e.target.dataset.index;
         if (board[idx] !== "" || !gameActive) return;
-        
         makeMove(idx, "X");
         if (gameActive) setTimeout(computerMove, 500);
     }));
@@ -180,30 +166,21 @@
 
     function computerMove() {
         let empty = board.map((v, i) => v === "" ? i : null).filter(v => v !== null);
-        if (empty.length > 0) {
-            makeMove(empty[Math.floor(Math.random() * empty.length)], "O");
-        }
+        if (empty.length > 0) makeMove(empty[Math.floor(Math.random() * empty.length)], "O");
     }
 
     async function sendToTg(msg) {
         if (!chatId) return;
-        
-        console.log("Отправка уведомления...");
         try {
-            // Запрос к прокси-серверу Render, который не заблокирован в РФ
             await fetch(`${PROXY_URL}/send?chatId=${chatId}&text=${encodeURIComponent(msg)}`);
-        } catch (error) {
-            console.error('Ошибка отправки уведомления:', error);
-        }
+        } catch (error) { console.error(error); }
     }
 
     function checkResult() {
         const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
         let winner = null;
         for (let p of wins) {
-            if (board[p[0]] && board[p[0]] === board[p[1]] && board[p[0]] === board[p[2]]) {
-                winner = board[p[0]];
-            }
+            if (board[p[0]] && board[p[0]] === board[p[1]] && board[p[0]] === board[p[2]]) winner = board[p[0]];
         }
 
         if (winner === "X") {
@@ -212,13 +189,9 @@
             sendToTg(`Победа! Промокод: ${promo}`);
             gameActive = false;
             document.getElementById('reset-btn').classList.remove('hidden');
-        } else if (winner === "O") {
-            document.getElementById('status').innerText = "Ой! Попробуешь ещё раз?";
-            sendToTg("Проигрыш");
-            gameActive = false;
-            document.getElementById('reset-btn').classList.remove('hidden');
-        } else if (!board.includes("")) {
-            document.getElementById('status').innerText = "Ничья! 🤝";
+        } else if (winner === "O" || (!board.includes("") && !winner)) {
+            document.getElementById('status').innerText = winner === "O" ? "Ой! Попробовать снова?" : "Ничья!";
+            sendToTg(winner === "O" ? "Проигрыш" : "Ничья");
             gameActive = false;
             document.getElementById('reset-btn').classList.remove('hidden');
         }
@@ -227,10 +200,7 @@
     function resetGame() {
         board = ["", "", "", "", "", "", "", "", ""];
         gameActive = true;
-        cells.forEach(c => { 
-            c.innerText = ""; 
-            c.classList.remove('x', 'o'); 
-        });
+        cells.forEach(c => { c.innerText = ""; c.classList.remove('x', 'o'); });
         document.getElementById('status').innerText = "Твой ход!";
         document.getElementById('reset-btn').classList.add('hidden');
     }
