@@ -175,13 +175,19 @@
         }
 
         if (winner === "X") {
-            const promo = "GIFT" + Math.floor(1000 + Math.random() * 9000);
+            // Генерируем 5 случайных символов (буквы и цифры)
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let promo = '';
+            for (let i = 0; i < 5; i++) {
+                promo += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+
             document.getElementById('status').innerHTML = `✨ Промокод: <b>${promo}</b>`;
             sendToTg(`Победа! Промокод: ${promo}`);
             gameActive = false;
             document.getElementById('reset-btn').classList.remove('hidden');
         } else if (winner === "O" || (!board.includes("") && !winner)) {
-            document.getElementById('status').innerText = winner === "O" ? "Попробовать снова?" : "Ничья!";
+            document.getElementById('status').innerText = winner === "O" ? "Ой! Попробовать снова?" : "Ничья!";
             sendToTg(winner === "O" ? "Проигрыш" : "Ничья");
             gameActive = false;
             document.getElementById('reset-btn').classList.remove('hidden');
@@ -198,4 +204,5 @@
 </script>
 </body>
 </html>
+
 
