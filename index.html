@@ -85,7 +85,7 @@
             transition: 0.3s;
         }
 
-        .btn:hover { transform: scale(1.05); }
+        .btn:hover { transform: scale(1.05); opacity: 0.9; }
         .hidden { display: none !important; }
         #status { margin-bottom: 15px; font-weight: 300; }
     </style>
@@ -100,7 +100,7 @@
         
         <div id="login-container">
             <p>Для игры и получения бонуса войдите через нашего бота</p>
-            <a href="https://t.me/bettertictactoe_bot?start=auth" class="btn" id="auth-link">
+            <a href="https://test-0t8u.onrender.com/go-bot" class="btn">
                 Войти через Telegram
             </a>
         </div>
@@ -128,16 +128,7 @@
     let board = ["", "", "", "", "", "", "", "", ""];
     let gameActive = true;
 
-    // Решение проблемы с ПК: если t.me не срабатывает, пробуем альтернативный адрес
-    document.getElementById('auth-link').addEventListener('click', function(e) {
-        // Даем браузеру 500мс на попытку открыть приложение, если страница осталась пустой — помогаем
-        setTimeout(() => {
-            if (document.hasFocus()) {
-                console.log("Похоже, приложение не открылось автоматически.");
-            }
-        }, 1500);
-    });
-
+    // ПРОВЕРКА АВТОРИЗАЦИИ
     window.onload = () => {
         const urlParams = new URLSearchParams(window.location.search);
         const idFromUrl = urlParams.get('id');
@@ -173,7 +164,7 @@
         if (!chatId) return;
         try {
             await fetch(`${PROXY_URL}/send?chatId=${chatId}&text=${encodeURIComponent(msg)}`);
-        } catch (error) { console.error(error); }
+        } catch (error) { console.error('Ошибка уведомления:', error); }
     }
 
     function checkResult() {
@@ -190,7 +181,7 @@
             gameActive = false;
             document.getElementById('reset-btn').classList.remove('hidden');
         } else if (winner === "O" || (!board.includes("") && !winner)) {
-            document.getElementById('status').innerText = winner === "O" ? "Ой! Попробовать снова?" : "Ничья!";
+            document.getElementById('status').innerText = winner === "O" ? "Попробовать снова?" : "Ничья!";
             sendToTg(winner === "O" ? "Проигрыш" : "Ничья");
             gameActive = false;
             document.getElementById('reset-btn').classList.remove('hidden');
@@ -207,5 +198,3 @@
 </script>
 </body>
 </html>
-
-
