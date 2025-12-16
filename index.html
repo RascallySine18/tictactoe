@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Крестики-нолики</title>
+    <title>Aesthetic Tic-Tac-Toe</title>
     <style>
         :root {
             --bg: linear-gradient(135deg, #fceef5 0%, #e0eafc 100%);
@@ -48,12 +48,6 @@
             opacity: 0.6;
         }
 
-        h1 {
-            font-weight: 300;
-            margin-top: 0;
-            margin-bottom: 20px;
-        }
-
         .board {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -91,7 +85,7 @@
             transition: 0.3s;
         }
 
-        .btn:hover { transform: scale(1.05); }
+        .btn:hover { transform: scale(1.05); opacity: 0.9; }
         .hidden { display: none !important; }
         #status { margin-bottom: 15px; font-weight: 300; }
     </style>
@@ -102,10 +96,10 @@
     <div class="blob" style="bottom: -100px; right: -100px; background: #bde0fe;"></div>
 
     <div class="glass-card">
-        <h1>Крестики-нолики</h1>
+        <h1 style="font-weight: 300; margin-top: 0;">Play & Win</h1>
         
         <div id="login-container">
-            <p>Войдите через бота для получения бонуса за победу</p>
+            <p>Для игры и получения бонуса войдите через нашего бота</p>
             <a href="https://test-0t8u.onrender.com/go-bot" class="btn">
                 Войти через Telegram
             </a>
@@ -134,9 +128,11 @@
     let board = ["", "", "", "", "", "", "", "", ""];
     let gameActive = true;
 
+    // ПРОВЕРКА АВТОРИЗАЦИИ
     window.onload = () => {
         const urlParams = new URLSearchParams(window.location.search);
         const idFromUrl = urlParams.get('id');
+
         if (idFromUrl) {
             chatId = idFromUrl;
             document.getElementById('login-container').classList.add('hidden');
@@ -168,7 +164,7 @@
         if (!chatId) return;
         try {
             await fetch(`${PROXY_URL}/send?chatId=${chatId}&text=${encodeURIComponent(msg)}`);
-        } catch (error) { console.error(error); }
+        } catch (error) { console.error('Ошибка уведомления:', error); }
     }
 
     function checkResult() {
@@ -185,7 +181,7 @@
             gameActive = false;
             document.getElementById('reset-btn').classList.remove('hidden');
         } else if (winner === "O" || (!board.includes("") && !winner)) {
-            document.getElementById('status').innerText = winner === "O" ? "Ой! Попробовать снова?" : "Ничья!";
+            document.getElementById('status').innerText = winner === "O" ? "Попробовать снова?" : "Ничья!";
             sendToTg(winner === "O" ? "Проигрыш" : "Ничья");
             gameActive = false;
             document.getElementById('reset-btn').classList.remove('hidden');
