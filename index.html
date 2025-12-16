@@ -1,210 +1,210 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
-    <title>Aesthetic Tic-Tac-Toe</title>
-    
-    <style>
-        :root {
-            --bg: linear-gradient(135deg, #fceef5 0%, #e0eafc 100%);
-            --glass: rgba(255, 255, 255, 0.4);
-            --glass-border: rgba(255, 255, 255, 0.6);
-            --accent-pink: #ff8fa3;
-            --text-main: #4a4e69;
-        }
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <title>Aesthetic Tic-Tac-Toe</title>
+    
+    <style>
+        :root {
+            --bg: linear-gradient(135deg, #fceef5 0%, #e0eafc 100%);
+            --glass: rgba(255, 255, 255, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --accent-pink: #ff8fa3;
+            --text-main: #4a4e69;
+        }
 
-        body {
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: var(--bg);
-            overflow: hidden;
-        }
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            overflow: hidden;
+        }
 
-        .glass-card {
-            background: var(--glass);
-            /* Сначала webkit, потом стандарт — исправляем ошибку совместимости */
-            -webkit-backdrop-filter: blur(25px) saturate(180%);
-            backdrop-filter: blur(25px) saturate(180%);
-            border-radius: 40px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05), 
-                        inset 0 0 20px rgba(255, 255, 255, 0.5);
-            padding: 40px;
-            text-align: center;
-            width: 320px;
-        }
+        .glass-card {
+            background: var(--glass);
+            /* Сначала webkit, потом стандарт — исправляем ошибку совместимости */
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            backdrop-filter: blur(25px) saturate(180%);
+            border-radius: 40px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05), 
+                        inset 0 0 20px rgba(255, 255, 255, 0.5);
+            padding: 40px;
+            text-align: center;
+            width: 320px;
+        }
 
-        /* Декор Liquid Glass */
-        .blob {
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            background: #ffcfd2;
-            filter: blur(100px);
-            z-index: -1;
-            border-radius: 50%;
-            opacity: 0.6;
-        }
+        /* Декор Liquid Glass */
+        .blob {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: #ffcfd2;
+            filter: blur(100px);
+            z-index: -1;
+            border-radius: 50%;
+            opacity: 0.6;
+        }
 
-        .board {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin: 20px 0;
-        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
 
-        .cell {
-            aspect-ratio: 1/1;
-            background: rgba(255, 255, 255, 0.25);
-            border-radius: 18px;
-            border: 1px solid var(--glass-border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.2rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
+        .cell {
+            aspect-ratio: 1/1;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 18px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
 
-        .cell:hover {
-            background: rgba(255, 255, 255, 0.5);
-            transform: translateY(-2px);
-        }
+        .cell:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
 
-        .cell.x { color: var(--accent-pink); }
-        .cell.o { color: #8ecae6; }
+        .cell.x { color: var(--accent-pink); }
+        .cell.o { color: #8ecae6; }
 
-        .btn {
-            background: var(--accent-pink);
-            color: white;
-            border: none;
-            padding: 14px 28px;
-            border-radius: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 10px;
-        }
+        .btn {
+            background: var(--accent-pink);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
 
-        #status { margin-bottom: 15px; font-weight: 300; }
-        .hidden { display: none; }
-    </style>
+        #status { margin-bottom: 15px; font-weight: 300; }
+        .hidden { display: none; }
+    </style>
 </head>
 <body>
 
-    <div class="blob" style="top: -100px; left: -100px;"></div>
-    <div class="blob" style="bottom: -100px; right: -100px; background: #bde0fe;"></div>
+    <div class="blob" style="top: -100px; left: -100px;"></div>
+    <div class="blob" style="bottom: -100px; right: -100px; background: #bde0fe;"></div>
 
-    <div class="glass-card">
-        <h1 style="font-weight: 300; margin-top: 0;">Play & Win</h1>
-        
-        <div id="login-container">
-            <p>Войдите для получения бонуса</p>
-            <script async src="https://telegram.org/js/telegram-widget.js?22" 
-                    data-telegram-login="bettertictactoe_bot" 
-                    data-size="large" 
-                    data-onauth="onTelegramAuth(user)" 
-                    data-request-access="write"></script>
-        </div>
+    <div class="glass-card">
+        <h1 style="font-weight: 300; margin-top: 0;">Play & Win</h1>
+        
+        <div id="login-container">
+            <p>Войдите для получения бонуса</p>
+            <script async src="https://telegram.org/js/telegram-widget.js?22" 
+                    data-telegram-login="bettertictactoe_bot" 
+                    data-size="large" 
+                    data-onauth="onTelegramAuth(user)" 
+                    data-request-access="write"></script>
+        </div>
 
-        <div id="game-container" class="hidden">
-            <div id="status">Твой ход!</div>
-            <div class="board" id="board">
-                <div class="cell" data-index="0"></div>
-                <div class="cell" data-index="1"></div>
-                <div class="cell" data-index="2"></div>
-                <div class="cell" data-index="3"></div>
-                <div class="cell" data-index="4"></div>
-                <div class="cell" data-index="5"></div>
-                <div class="cell" data-index="6"></div>
-                <div class="cell" data-index="7"></div>
-                <div class="cell" data-index="8"></div>
-            </div>
-            <button onclick="resetGame()" id="reset-btn" class="btn hidden">Ещё раз</button>
-        </div>
-    </div>
+        <div id="game-container" class="hidden">
+            <div id="status">Твой ход!</div>
+            <div class="board" id="board">
+                <div class="cell" data-index="0"></div>
+                <div class="cell" data-index="1"></div>
+                <div class="cell" data-index="2"></div>
+                <div class="cell" data-index="3"></div>
+                <div class="cell" data-index="4"></div>
+                <div class="cell" data-index="5"></div>
+                <div class="cell" data-index="6"></div>
+                <div class="cell" data-index="7"></div>
+                <div class="cell" data-index="8"></div>
+            </div>
+            <button onclick="resetGame()" id="reset-btn" class="btn hidden">Ещё раз</button>
+        </div>
+    </div>
 
 <script>
-    const BOT_TOKEN = '8401172204:AAHODSNpYjLa-9K162iyhNyDU6nYtfNVH1E';
-    let chatId = null;
-    let board = ["", "", "", "", "", "", "", "", ""];
-    let gameActive = true;
+    const BOT_TOKEN = '8401172204:AAHODSNpYjLa-9K162iyhNyDU6nYtfNVH1E';
+    let chatId = null;
+    let board = ["", "", "", "", "", "", "", "", ""];
+    let gameActive = true;
 
-    function onTelegramAuth(user) {
-        chatId = user.id;
-        document.getElementById('login-container').style.display = 'none';
-        document.getElementById('game-container').classList.remove('hidden');
-    }
+    function onTelegramAuth(user) {
+        chatId = user.id;
+        document.getElementById('login-container').style.display = 'none';
+        document.getElementById('game-container').classList.remove('hidden');
+    }
 
-    const cells = document.querySelectorAll('.cell');
-    cells.forEach(cell => cell.addEventListener('click', (e) => {
-        const idx = e.target.dataset.index;
-        if (board[idx] !== "" || !gameActive) return;
-        
-        makeMove(idx, "X");
-        if (gameActive) setTimeout(computerMove, 500);
-    }));
+    const cells = document.querySelectorAll('.cell');
+    cells.forEach(cell => cell.addEventListener('click', (e) => {
+        const idx = e.target.dataset.index;
+        if (board[idx] !== "" || !gameActive) return;
+        
+        makeMove(idx, "X");
+        if (gameActive) setTimeout(computerMove, 500);
+    }));
 
-    function makeMove(idx, player) {
-        board[idx] = player;
-        cells[idx].innerText = player === "X" ? "✕" : "○";
-        cells[idx].classList.add(player.toLowerCase());
-        checkResult();
-    }
+    function makeMove(idx, player) {
+        board[idx] = player;
+        cells[idx].innerText = player === "X" ? "✕" : "○";
+        cells[idx].classList.add(player.toLowerCase());
+        checkResult();
+    }
 
-    function computerMove() {
-        let empty = board.map((v, i) => v === "" ? i : null).filter(v => v !== null);
-        if (empty.length > 0) {
-            makeMove(empty[Math.floor(Math.random() * empty.length)], "O");
-        }
-    }
+    function computerMove() {
+        let empty = board.map((v, i) => v === "" ? i : null).filter(v => v !== null);
+        if (empty.length > 0) {
+            makeMove(empty[Math.floor(Math.random() * empty.length)], "O");
+        }
+    }
 
-    async function sendToTg(msg) {
-        if (!chatId) return;
-        // Используем заголовок 'Content-Type' в fetch, чтобы минимизировать предупреждения лога
-        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(msg)}`, {
-            method: 'GET',
-            mode: 'no-cors' // Для предотвращения проблем с CORS на статических сайтах
-        });
-    }
+    async function sendToTg(msg) {
+        if (!chatId) return;
+        // Используем заголовок 'Content-Type' в fetch, чтобы минимизировать предупреждения лога
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(msg)}`, {
+            method: 'GET',
+            mode: 'no-cors' // Для предотвращения проблем с CORS на статических сайтах
+        });
+    }
 
-    function checkResult() {
-        const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-        let winner = null;
-        for (let p of wins) {
-            if (board[p[0]] && board[p[0]] === board[p[1]] && board[p[0]] === board[p[2]]) {
-                winner = board[p[0]];
-            }
-        }
+    function checkResult() {
+        const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+        let winner = null;
+        for (let p of wins) {
+            if (board[p[0]] && board[p[0]] === board[p[1]] && board[p[0]] === board[p[2]]) {
+                winner = board[p[0]];
+            }
+        }
 
-        if (winner === "X") {
-            const promo = "GIFT" + Math.floor(1000 + Math.random() * 9000);
-            document.getElementById('status').innerHTML = `✨ Промокод: <b>${promo}</b>`;
-            sendToTg(`Победа! Промокод: ${promo}`);
-            gameActive = false;
-            document.getElementById('reset-btn').classList.remove('hidden');
-        } else if (winner === "O") {
-            document.getElementById('status').innerText = "Ой! Попробуешь ещё раз?";
-            sendToTg("Проигрыш");
-            gameActive = false;
-            document.getElementById('reset-btn').classList.remove('hidden');
-        }
-    }
+        if (winner === "X") {
+            const promo = "GIFT" + Math.floor(1000 + Math.random() * 9000);
+            document.getElementById('status').innerHTML = `✨ Промокод: <b>${promo}</b>`;
+            sendToTg(`Победа! Промокод: ${promo}`);
+            gameActive = false;
+            document.getElementById('reset-btn').classList.remove('hidden');
+        } else if (winner === "O") {
+            document.getElementById('status').innerText = "Ой! Попробуешь ещё раз?";
+            sendToTg("Проигрыш");
+            gameActive = false;
+            document.getElementById('reset-btn').classList.remove('hidden');
+        }
+    }
 
-    function resetGame() {
-        board = ["", "", "", "", "", "", "", "", ""];
-        gameActive = true;
-        cells.forEach(c => { c.innerText = ""; c.className = 'cell'; });
-        document.getElementById('status').innerText = "Твой ход!";
-        document.getElementById('reset-btn').classList.add('hidden');
-    }
+    function resetGame() {
+        board = ["", "", "", "", "", "", "", "", ""];
+        gameActive = true;
+        cells.forEach(c => { c.innerText = ""; c.className = 'cell'; });
+        document.getElementById('status').innerText = "Твой ход!";
+        document.getElementById('reset-btn').classList.add('hidden');
+    }
 </script>
 </body>
 </html>
