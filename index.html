@@ -3,10 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aesthetic Tic-Tac-Toe</title>
+    <title>Крестики-нолики</title>
     <style>
         :root {
-            --bg: linear-gradient(135deg, #fceef5 0%, #e0eafc 100%);
+            /* Цвета для переливающегося фона */
+            --color1: #fceef5;
+            --color2: #e0eafc;
+            --color3: #eec9ff;
             --glass: rgba(255, 255, 255, 0.4);
             --glass-border: rgba(255, 255, 255, 0.6);
             --accent-pink: #ff8fa3;
@@ -20,9 +23,21 @@
             align-items: center;
             justify-content: center;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: var(--bg);
+            
+            /* Анимированный градиентный фон */
+            background: linear-gradient(-45deg, var(--color1), var(--color2), var(--color3), var(--color1));
+            background-size: 400% 400%;
+            animation: gradientMove 15s ease infinite;
+            
             overflow: hidden;
             color: var(--text-main);
+        }
+
+        /* Анимация плавного перелива */
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .glass-card {
@@ -38,6 +53,7 @@
             z-index: 10;
         }
 
+        /* Дополнительные декоративные пятна (теперь они плавают поверх перелива) */
         .blob {
             position: absolute;
             width: 400px; height: 400px;
@@ -45,7 +61,13 @@
             filter: blur(100px);
             z-index: -1;
             border-radius: 50%;
-            opacity: 0.6;
+            opacity: 0.4;
+            animation: float 20s infinite alternate;
+        }
+
+        @keyframes float {
+            from { transform: translate(-20%, -20%); }
+            to { transform: translate(20%, 20%); }
         }
 
         .board {
@@ -128,7 +150,6 @@
     let board = ["", "", "", "", "", "", "", "", ""];
     let gameActive = true;
 
-    // ПРОВЕРКА АВТОРИЗАЦИИ
     window.onload = () => {
         const urlParams = new URLSearchParams(window.location.search);
         const idFromUrl = urlParams.get('id');
@@ -175,7 +196,6 @@
         }
 
         if (winner === "X") {
-            // Генерируем 5 случайных символов (буквы и цифры)
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             let promo = '';
             for (let i = 0; i < 5; i++) {
@@ -204,5 +224,3 @@
 </script>
 </body>
 </html>
-
-
